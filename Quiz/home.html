@@ -10,15 +10,52 @@
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     
-    <title>QUIZ-GAME -PraRoz Tutorial</title>
+    <title>QUIZ-GAME</title>
 </head>
 <body>
     <!--Materialize CSS for Home Page Design-->
-   
+    <nav class="nav-wrapper black">
+        <div class="container">
+            <a href ="#" class="brand-logo center"> QUIZ-GAME</a>
+        </div>
+    </nav>
+    <section class="container section">
+        <div class="row">
+            <div class="col s12 16 offset-13">
+                <form class="myform" name="id" onsubmit="hideButton(event)">
+                    <h4 class="center-align red-text"> Contestent name</h4>
+                    <div class="progress yellow">
+                        <div class="indeterminate"></div>
+                    </div>
+                    <div class="input-field">
+                        <i class="material-icons custom-icon prefix">person</i>
+                        <input type="text" class="input-custom white-text" id="name" required>
+                        
+                        <label for="name"> Enter your name</label>
+                        
+                        <p class="center"><input type="submit" id="submit_button" class="btn blue" onclick="hideButton(this) ">Submit name</input>
+
+
+                    </div>
+                    <div id="quiz-rules">
+                        <p class="flow-text teal-text text-lighten-2">Quiz rules:</p>
+                        <p class="custom-paragraph hide-animation">Rule 1: You can't skip any question</p>
+                        <p class="custom-paragraph hide-animation">Rule 2: You can't go to previous question</p>
+                        <p class="custom-paragraph hide-animation">Rule 3: Try not to cheat!</p>
+                    </div>
+                      
+                      
+                </form> 
+
+                <p class="center"><a id="start-button" href="quiz.html" class="btn blue hide-animation"> Let's start?</a></p>
+            </div>
+        </div>
+    </section>
     
 
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
  
+<script src="home.js"></script>
 </body>
 </html>
