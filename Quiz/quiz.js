@@ -1,3 +1,5 @@
+let user_name= sessionStorage.getItem("name");
+console.log(user_name);
 let questions = [
     {
         id:1,
@@ -13,27 +15,40 @@ let questions = [
     {
         id:2,
         question : " What is the full form of RAM?",
-        answer :" Random Access Memory",
+        answer :"Random Access Memory",
         options : [
             "Random Access Memory",
             "Randomely Access Memory",
             "Run Aceapt Memory",
             "None of these"
-        ]
-    }
-]
+        ],
+    },
+    {
+        id:3,
+        question: "Who wrote the play 'Hamlet'?",
+        answer: "William Shakespeare",
+        options: [
+            "William Wordsworth",
+            "John Milton",
+            "William Shakespeare",
+            "Charles Dickens",
+        ],
+    },
+];
+let marked_answer=[];
 
 let question_count=0;
 let points=0;
 
-window.onload = function(){
-    show(question_count);
-};
+document.addEventListener("DOMContentLoaded", show(question_count));
+    
+
 
 function show(count) {
     let question = document.getElementById("questions");
-    let [first, second, third, fourth] = questions[count].options; // Use 'questions' instead of 'question'
-    question.innerHTML = `<h2>Q${count + 1}.${questions[count].question}</h2>
+    let [first, second, third, fourth] = questions[count].options; 
+    question.innerHTML = `<div class="question"><h2>Q${count + 1}.${questions[count].question}</h2></div>
+
       <ul class="option_group">
       <li class="option">${first} </li>
       <li class="option">${second} </li>
@@ -53,23 +68,24 @@ function toggleActive(){
                 }
             }
             option[i].classList.add("active");        
-        }
+        };
     }
 }
 function next(){
+    let user_answer=document.querySelector("li.option.active");
+    user_answer = user_answer.textContent.trim();
+    marked_answer.push(user_answer);
+    
+    if(user_answer == questions[question_count].answer){
+        console.log("Here");
+        points=points+10;
+        sessionStorage.setItem("points",points);
+    }
     if(question_count==questions.length-1){
         location.href="final.html";
     }
+    question_count++;
+    console.log(points);
     console.log(question_count);
-
-
-let user_answer=document.querySelector("li.option.active").innerHTML;
-if(user_answer== questions[question_count].answer){
-    points+=10;
-    sessionStorage.setItem("points",points);
-}
-
-console.log(points);
-question_count++;
-show(question_count);
+    show(question_count);
 }

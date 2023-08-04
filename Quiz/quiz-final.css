@@ -53,6 +53,7 @@ body{
 }
 
 .option{
+    font-weight: bold;
     display: block;
     width : 300px;
     background-color: #fff;
@@ -60,17 +61,23 @@ body{
     padding: 15px 20px;
     border-radius: 50px;
     border: 2px solid transparent;
-    transition: 0.4s all ;
+    transition: 0.3s all ;
+    box-shadow: 0 4px 5px 5px rgba(3, 12, 8, 0.5);
 }
 .option:hover{
     cursor: pointer;
     border: 2px solid #34495e;
     color: #34495e;
+    box-shadow: 0 4px 8px rgba(6, 117, 67, 0.636);
+    transition: 0.2s all;
 }
 
 .option.active{
     background-color: #341f97;
     color: #fff;
+    text-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
+    box-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
+    transition: 0.6s all;
 }
 .btn-next{
     border: none;
@@ -78,10 +85,95 @@ body{
     background-color: #341f97;
     color: #fff;
     border-radius: 50px;
-    transition: 0.4s all ;
+    transition: 0.5s all ;
 }
 .btn-next:hover{
     cursor: pointer;
     background-color: greenyellow;
     color: #000;
+}
+.blue{
+    
+    background-color: #341f97;
+    border-radius: 50px;
+    box-shadow: 0px 3px 2px 3px #222081;
+    transition: 0.5s box-shadow; ;
+}
+.btn{
+    width: 150px;
+    margin-bottom: 2px;
+    padding: 5px;
+    border-radius: 50px;
+}
+.btn:hover{
+    cursor:pointer;
+    background-color: #b1abce;
+    color: #000000;
+}
+
+.award_icon{
+    display: block;
+    
+    font-size: 300px;
+    color: #fff;
+    animation: award 1s ease-in-out 3s forwards;
+
+    @keyframes award{
+        from{
+            transform: scale(0);
+        }
+        to{
+            transform: scale(1);
+        }
+    }
+}
+
+.username, .userpoints{
+    color: #fff;
+    text-align: center;
+    margin-top: 15px;
+}
+.border{
+    height: 500px;
+    width: 500px;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    border-radius: 10px;
+    top: 100px;
+    border-color: transparent;
+}
+.question{
+    font-size: 20px;
+    font-family: Georgia;
+    font-weight: bold;
+    flex-direction: row;
+    color: #fff;
+    background-color: green;
+    display: flex;
+    justify-content:space-around  ;
+    align-items: center;
+    margin:none;
+    width: 700px;
+    height: 50px;
+    border-radius: 10px;
+}
+.show-animation {
+    animation-name: scale-in;
+    animation-duration: 0.6s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+  }
+  
+  /* Define the animation keyframes */
+  @keyframes scale-in {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
 }

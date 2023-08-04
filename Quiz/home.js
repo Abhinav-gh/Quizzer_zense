@@ -1,8 +1,12 @@
+
+
 function hideButton(event) {
 
     event.preventDefault();
-    const nameInputValue=document.getElementById("name").value;
     const nameInput=document.getElementById("name");
+    const nameInputValue=document.getElementById("name").value;
+    sessionStorage.setItem("name",nameInputValue);
+    
     const submittion_input=document.getElementById("submit_button");
 
     if(nameInputValue!=""){
