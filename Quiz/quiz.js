@@ -46,13 +46,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });    
 
 
-function show(count,already_marked=0) {
-    console.log("Marked answer    " , marked_answer);
+  function show(count, already_marked = 0) {
+    console.log("Marked answer    ", marked_answer);
     if (count >= 0 && count < questions.length) {
-
         let question = document.getElementById("questions");
-        let [first, second, third, fourth] = questions[count].options; 
-        question.innerHTML = `<div class="question"><h2>Q${count + 1}.${questions[count].question}</h2></div>
+        let [first, second, third, fourth] = questions[count].options;
+        question.innerHTML = `<div class="question"><h2>Q${
+            count + 1
+        }.${questions[count].question}</h2></div>
 
         <ul class="option_group">
         <li class="option">${first} </li>
@@ -64,29 +65,37 @@ function show(count,already_marked=0) {
         toggleActive(already_marked);
     }
 }
-function toggleActive(already_marked=0){
+
+function toggleActive(already_marked = 0) {
     console.log("already marked ", already_marked);
-    let option= document.querySelectorAll("li.option");
-    console.log("option: ", option );
+    let option = document.querySelectorAll("li.option");
+    console.log("option: ", option);
+
+    for (let i = 0; i < option.length; i++) {
+        option[i].classList.remove("active"); // Remove the "active" class for all options
+    }
+
     if (already_marked == 1) {
-        for(let i=0;i<option.length;i++){
+        let markedAnswer = marked_answer[question_count].trim();
+        for (let i = 0; i < option.length; i++) {
             let optionText = option[i].textContent.trim();
-            let markedAnswer = marked_answer[question_count].trim();
             if (optionText === markedAnswer) {
                 console.log("Inside option active");
                 option[i].classList.add("active");
             }
         }
     }
-    for(let i=0;i<option.length;i++)
-    {
-        option[i].onclick = function(){
-            for(let i=0;i<option.length;i++){
-                if(option[i].classList.contains("active")){
+
+    for (let i = 0; i < option.length; i++) {
+        option[i].onclick = function () {
+            for (let i = 0; i < option.length; i++) {
+                if (option[i].classList.contains("active")) {
                     option[i].classList.remove("active");
                 }
             }
             option[i].classList.add("active");
+            marked_answer[question_count] = option[i].textContent.trim();
+            already_answered[question_count] = 1;
         };
     }
 }
