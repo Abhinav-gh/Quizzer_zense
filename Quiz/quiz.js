@@ -69,10 +69,12 @@ function toggleActive(already_marked=0){
     let option= document.querySelectorAll("li.option");
     console.log("option: ", option );
     if (already_marked == 1) {
-        for (let i = 0; i < option.length; i++) {
-          option[i].classList.remove("active"); 
-          if (option[i].textContent.trim() === marked_answer[question_count]) {
-            option[i].classList.add("active"); 
+        for(let i=0;i<option.length;i++){
+            let optionText = option[i].textContent.trim();
+            let markedAnswer = marked_answer[question_count].trim();
+            if (optionText === markedAnswer) {
+                console.log("Inside option active");
+                option[i].classList.add("active");
             }
         }
     }
