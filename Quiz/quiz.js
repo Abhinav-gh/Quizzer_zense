@@ -1,5 +1,5 @@
 let user_name= sessionStorage.getItem("name");
-console.log(user_name);
+
 let questions = [
     {
         id:1,
@@ -38,9 +38,15 @@ let questions = [
 let already_answered=[0,0,0];
 let marked_answer=["","",""];
 
-let question_count=-1;
+let question_count=0;
 let points=0;
 
+if(user_name){
+    let namespan=document.querySelector(".name");
+    if(namespan){
+        namespan.textContent=user_name;
+    }
+}
 document.addEventListener("DOMContentLoaded", () => {
     show(question_count, check_already_answered());
   });    
@@ -80,7 +86,7 @@ function toggleActive(already_marked = 0) {
         for (let i = 0; i < option.length; i++) {
             let optionText = option[i].textContent.trim();
             if (optionText === markedAnswer) {
-                console.log("Inside option active");
+                
                 option[i].classList.add("active");
             }
         }
@@ -126,16 +132,18 @@ function next(){
         calculate_score();
         location.href="final.html";
     }
-    question_count++;
+    
     store_answer();
+    question_count++;
     show(question_count,check_already_answered());
     
 }
 function previous(){
     if(question_count==0)
         return;
-    question_count--;
+    
     store_answer();
+    question_count--;
     show(question_count,check_already_answered());
     
 }
@@ -146,4 +154,13 @@ function calculate_score(){
             points+=10;
     sessionStorage.setItem("points",points);
     
+}
+function clear_options(){
+    marked_answer[question_count]="";
+    already_answered[question_count]=0;
+    let option = document.querySelectorAll("li.option");
+    for (let i = 0; i < option.length; i++) {
+        option[i].classList.remove("active"); 
+    }
+    show(question_count,check_already_answered());
 }

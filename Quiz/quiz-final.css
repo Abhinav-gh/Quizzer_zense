@@ -5,13 +5,17 @@
 }
 
 body{
+    align-items: center;
     background-image: url(pic.jpg);
     background-position: center;
     background-size: cover;
     height:100vh;
+    width: 100vw;
     font-family : sans-serif;
 }
-
+.unselectable {
+    user-select: none;
+}
 .wrapper{
     display: flex;
     justify-content: center;
@@ -22,32 +26,42 @@ body{
 
 .quiz{
     display : grid;
+    align-content:space-evenly ;
     grid-template-rows: 60px auto;
     width: 600px;
     height: 500px;
     border-radius: 50px;
-
+    
 }
 .quiz_header{
     display: flex;
     justify-content: space-between;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
-    background-color: #fff;
+    background-color: #d4e635;
+    border: double;
+    border-block-end: 5px solid red;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
     box-shadow: 0px 2px 5px 1px rgba(0,0,0,0.1);
     z-index:1;
 }
 .quiz_user{
+    background-color: rgb(72, 228, 176);
+    border-top-left-radius: 40px;
     display: flex;
     align-items: center;
     height:100%;
     padding-left:30px;
+    padding-right:30px;
 }
 .quiz_body{
     padding: 20px 30px;
+    border-block-end: 5px solid red;
     background-color: skyblue;
 }
 .option_group{
+    background-color: antiquewhite;
     list-style-type: none;
     margin: 30px 0;
 }
@@ -144,20 +158,45 @@ body{
     top: 100px;
     border-color: transparent;
 }
-.question{
-    font-size: 20px;
+.inner_wrapper{
+    padding: 10px;
+    box-sizing: content-box;
+    margin: 10px;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+}
+.question {
+    font-size: auto; /* Set an initial font size */
     font-family: Georgia;
     font-weight: bold;
     flex-direction: row;
     color: #fff;
     background-color: green;
     display: flex;
-    justify-content:space-around  ;
+    box-sizing: content-box;
+    justify-content: space-around;
     align-items: center;
-    margin:none;
+    margin: auto;
+    height: auto;
     width: 700px;
-    height: 50px;
+    max-height: 300px; /*Set a maximum height for the question box */
     border-radius: 10px;
+    overflow-y: auto;
+    overflow: scroll; 
+
+    /*Scroll bar things*/
+    scrollbar-width: thin;
+    scrollbar-color: #34495e #f2f2f2;
+    scroll-behavior: smooth;
+    word-wrap: break-word;
+    white-space: normal;
+    padding: 10px;
+}
+
+
+::-webkit-scrollbar {
+    width: 0;
+    background-color: transparent;
 }
 .show-animation {
     animation-name: scale-in;
