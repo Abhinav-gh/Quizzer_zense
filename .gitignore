@@ -1,0 +1,7 @@
+#Files that i want to ignore
+
+learn_node/node_modules
+node_modules
+*~
+.DS_Store
+

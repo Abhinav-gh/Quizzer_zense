@@ -1,3 +1,5 @@
+
+
 let user_name= sessionStorage.getItem("name");
 
 let questions = [
@@ -37,9 +39,10 @@ let questions = [
 ];
 let already_answered=[0,0,0];
 let marked_answer=["","",""];
-
+let unanswerable=0;
 let question_count=0;
 let points=0;
+let timer_count=5;
 
 if(user_name){
     let namespan=document.querySelector(".name");
@@ -49,6 +52,7 @@ if(user_name){
 }
 document.addEventListener("DOMContentLoaded", () => {
     show(question_count, check_already_answered());
+    timer(timer_count);
   });    
 
 
@@ -68,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <li class="option">${fourth} </li>
         </ul>`;
         question_count = count;
+        
         toggleActive(already_marked);
     }
 }
@@ -106,6 +111,11 @@ function toggleActive(already_marked = 0) {
     }
 }
 function store_answer() {
+    console.log("unanswerable:", unanswerable);
+    if(unanswerable){
+        console.log("here");
+        return;
+    }
     let user_answer = document.querySelector("li.option.active");
     console.log("user_answer:", user_answer);
 
@@ -121,7 +131,13 @@ function store_answer() {
     
 }
 
-
+function timer_expired(){
+    finish_test();
+}
+function finish_test(){
+    calculate_score();
+    location.href="final.html";
+}
 function check_already_answered(){
     if(already_answered[question_count]==1)
         return 1;
@@ -132,19 +148,32 @@ function next(){
         calculate_score();
         location.href="final.html";
     }
-    
-    store_answer();
-    question_count++;
-    show(question_count,check_already_answered());
+    if(unanswerable){
+        make_unanswerable();
+        question_count++;
+        show(question_count,check_already_answered(),unanswerable);
+        return;
+    }
+    else{
+        store_answer();
+        question_count++;
+        show(question_count,check_already_answered(),unanswerable);
+    }
     
 }
 function previous(){
     if(question_count==0)
         return;
-    
-    store_answer();
-    question_count--;
-    show(question_count,check_already_answered());
+    if(unanswerable){
+        make_unanswerable();
+        question_count--;
+        show(question_count,check_already_answered());
+        return;
+    } else{
+        store_answer();
+        question_count--;
+        show(question_count,check_already_answered());
+    }
     
 }
 function calculate_score(){
@@ -164,3 +193,46 @@ function clear_options(){
     }
     show(question_count,check_already_answered());
 }
+function make_unanswerable() {
+    let option = document.querySelectorAll("li.option");
+    for (let i = 0; i < option.length; i++) {
+        option[i].onclick = null;
+        option[i].classList.add("disabled");
+    }
+}
+
+
+function timer(duration){
+    let now = new Date().getTime();
+        let deadline = now + duration * 10e2;
+
+        // To call defined function every second
+        let x = setInterval(function () {
+            // Getting current time in required format
+            now = new Date().getTime();  // Update the current time
+
+            // Calculating the difference
+            let t = deadline - now;
+
+            // Getting value of days, hours, minutes, seconds
+            let days = Math.floor(t / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((t % (1000 * 60)) / 1000);
+
+            // Output the remaining time
+            let countdownDisplay = document.getElementById("counter");
+            if (t >= 0) {
+                countdownDisplay.innerHTML =
+                    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                clearInterval(x);
+                countdownDisplay.innerHTML = "EXPIRED";
+                countdownDisplay.classList.add("countdown-expired");
+                unanswerable=1;
+                make_unanswerable();
+                setTimeout(timer_expired, 5000);
+            }
+        }, 1000);
+}
+

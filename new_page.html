@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Adding CSS/Stylesheet -->
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .countdown-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .countdown-clock {
+            font-size: 36px;
+            color: #333333;
+        }
+        
+        .countdown-expired {
+            font-size: 36px;
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="countdown-container">
+        <p id="demo" class="countdown-clock"></p>
+    </div>
+
+    <!-- Adding JavaScript code -->
+    <script>
+        // Calculate the initial deadline and set the interval
+        let now = new Date().getTime();
+        let deadline = now + 50 * 10e2;
+
+        // To call defined function every second
+        let x = setInterval(function () {
+            // Getting current time in required format
+            now = new Date().getTime();  // Update the current time
+
+            // Calculating the difference
+            let t = deadline - now;
+
+            // Getting value of days, hours, minutes, seconds
+            let days = Math.floor(t / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((t % (1000 * 60)) / 1000);
+
+            // Output the remaining time
+            let countdownDisplay = document.getElementById("demo");
+            if (t >= 0) {
+                countdownDisplay.innerHTML =
+                    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                clearInterval(x);
+                countdownDisplay.innerHTML = "EXPIRED";
+                countdownDisplay.classList.add("countdown-expired");
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

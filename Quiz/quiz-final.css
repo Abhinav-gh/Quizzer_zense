@@ -55,6 +55,24 @@ body{
     padding-left:30px;
     padding-right:30px;
 }
+.countdown-container{
+    font-size: 15px;
+    font-weight: bold;
+    color: #131212;
+    display: block;
+    height: 50px;
+    width:150px;
+    background-color: white;
+}
+.countdown-clock {
+    font-size: 36px;
+    color: #333333;
+}
+
+.countdown-expired {
+    font-size: 36px;
+    color: #ff0000;
+}
 .quiz_body{
     padding: 20px 30px;
     border-block-end: 5px solid red;
@@ -92,6 +110,12 @@ body{
     text-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
     box-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
     transition: 0.6s all;
+}
+li.option.disabled {
+    background-color: #f2f2f2; 
+    color: #a0a0a0;
+    pointer-events: none; 
+    opacity: 0.5; 
 }
 .btn-next{
     border: none;
