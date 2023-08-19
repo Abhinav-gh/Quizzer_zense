@@ -2,71 +2,7 @@
 
 let user_name= sessionStorage.getItem("name");
 
-// let questions = [
-//     {
-//         id:1,
-//         question : "What is the capital of India?",
-//         answer: "New Delhi",
-//         options : [
-//             "Bhopal",
-//             "Amritsar",
-//             "New Delhi",
-//             "Mumbai"
-//         ]
-//     },
-//     {
-//         id:2,
-//         question : " What is the full form of RAM?",
-//         answer :"Random Access Memory",
-//         options : [
-//             "Random Access Memory",
-//             "Randomely Access Memory",
-//             "Run Aceapt Memory",
-//             "None of these"
-//         ],
-//     },
-//     {
-//         id:3,
-//         question: "Who wrote the play 'Hamlet'?",
-//         answer: "William Shakespeare",
-//         options: [
-//             "William Wordsworth",
-//             "John Milton",
-//             "William Shakespeare",
-//             "Charles Dickens",
-//         ],
-//     },
-// ];
 
-let questions = [];
-document.addEventListener("DOMContentLoaded", () => {
-    fetch("/getQuestions?category='General Knowledge'")
-      .then((response) => response.json())
-      .then((questionsFromServer) => {
-        console.log(questionsFromServer);
-        questions = questionsFromServer.map((dbQuestion, index) => {
-          return {
-            id: index + 1,
-            question: dbQuestion.question,
-            answer: dbQuestion.solutions,
-            options: [
-              dbQuestion.option1,
-              dbQuestion.option2,
-              dbQuestion.option3,
-              dbQuestion.option4,
-            ],
-          };
-        });
-  
-        // Now you have the 'questions' array in the desired format
-        console.log(questions);
-        
-        // Continue with your code to process and display the questions
-      })
-      .catch((error) => {
-        console.error("Error fetching questions:", error);
-      });
-  });
   
   
 let already_answered=[0,0,0];
@@ -75,6 +11,38 @@ let unanswerable=0;
 let question_count=0;
 let points=0;
 let timer_count=500;
+let questions=[];
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/getQuestions') // Change the category as needed
+        .then((response) => response.json())
+        .then((questionsFromServer) => {
+            console.log(questionsFromServer);
+            
+            // Assign the fetched questions to the 'questions' variable
+            questions = questionsFromServer.map((dbQuestion, index) => {
+                return {
+                    id: index + 1,
+                    question: dbQuestion.question,
+                    answer: dbQuestion.solutions,
+                    options: [
+                        dbQuestion.option1,
+                        dbQuestion.option2,
+                        dbQuestion.option3,
+                        dbQuestion.option4,
+                    ],
+                };
+            }); 
+            console.log(questions);
+            show(question_count, check_already_answered());
+            timer(timer_count);
+           
+        })
+        .catch((error) => {
+            console.error('Error fetching questions:', error);
+        });
+});
+
 
 if(user_name){
     let namespan=document.querySelector(".name");
@@ -85,6 +53,7 @@ if(user_name){
 document.addEventListener("DOMContentLoaded", () => {
     show(question_count, check_already_answered());
     timer(timer_count);
+    console.log("Questions ", questions);
   });    
 
 

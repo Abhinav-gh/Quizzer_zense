@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     user: "root",
     password: "thisroot",
     database: "quizdb",
-    port: 3306,
+    port: 3333,
 });
 connection.connect((err) =>{
     if(err){
@@ -15,21 +15,5 @@ connection.connect((err) =>{
     console.log('Database connected');
 })
 
-
-Database.getQuestions = function (category, done) {
-  const connection = this.configure();
-  category = category.toLowerCase();
-  const query =
-    "SELECT question, option1, option2, option3, option4, solutions FROM questions WHERE category = ? ORDER BY RAND() LIMIT 10";
-
-  connection.query(query, [category], function (err, rows) {
-    if (err) {
-      done(err, null);
-    } else {
-      connection.end();
-      done(null, rows);
-    }
-  });
-};
 
 module.exports = connection;
