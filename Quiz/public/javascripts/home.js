@@ -1,4 +1,30 @@
 
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/getUserName')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Check the structure of the data received
+            if (data.firstname && data.lastname) {
+                const nameInput = document.getElementById("name");
+                const startButton = document.getElementById("start-button");
+                nameInput.value = `${data.firstname} ${data.lastname}`;
+                nameInput.disabled = true;
+                setTimeout(function () {
+                    showQuizRules();
+                }, 300); // Duration of the animation in milliseconds
+                setTimeout(function () {
+
+                    startButton.classList.remove("hide-animation");
+                    startButton.classList.add("show-animation");
+                    startButton.style.pointerEvents = "auto";
+                }, 3000); // Duration of the animation in milliseconds
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user name:', error);
+        });
+});
+
 
 function hideButton(event) {
 

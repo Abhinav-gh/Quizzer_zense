@@ -17,6 +17,15 @@
     <nav class="nav-wrapper black">
         <div class="container">
             <a href ="#" class="brand-logo center"> QUIZ-GAME</a>
+        <ul id="nav-mobile" class="right">
+            <li><a class="dropdown-trigger" href="./profile.html" data-target="profile-dropdown">
+                <i class="material-icons">account_circle</i></a>
+            </li>
+        </ul>
+        <!-- Dropdown Structure -->
+        <ul id="profile-dropdown" class="dropdown-content">
+            <li><a href="#!">User Profile</a></li>
+        </ul>
         </div>
     </nav>
     <section class="container section">
@@ -31,9 +40,9 @@
                         <i class="material-icons custom-icon prefix">person</i>
                         <input type="text" class="input-custom white-text" id="name" required>
                         
-                        <label for="name"> Enter your name</label>
+                        <!-- <label for="name"> Enter your name</label> -->
                         
-                        <p class="center"><input type="submit" id="submit_button" class="btn blue" onclick="hideButton(this) "></input>
+                        <!-- <p class="center"><input type="submit" id="submit_button" class="btn blue" onclick="hideButton(this) "></input> -->
 
 
                     </div>
@@ -57,6 +66,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
  
 <script src="..\javascripts\home.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropdownElems = document.querySelectorAll('.dropdown-trigger');
+        var options = {};
+        var instances = M.Dropdown.init(dropdownElems, options);
+    });
+</script>
+
 
 </body>
 </html>

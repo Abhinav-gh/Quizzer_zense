@@ -81,6 +81,17 @@ P{
       opacity: 1;
     }
   }
+  /* Style the dropdown trigger icon */
+.dropdown-trigger i.material-icons {
+  font-size: 36px;
+  line-height: inherit;
+}
+
+/* Style the dropdown content */
+.dropdown-content li a {
+  color: #000; /* Adjust the color */
+}
+
 
 
   
