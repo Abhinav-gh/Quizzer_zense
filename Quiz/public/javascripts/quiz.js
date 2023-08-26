@@ -10,7 +10,7 @@ let marked_answer = ["", "", ""];
 let unanswerable = 0;
 let question_count = 0;
 let points = 0;
-let timer_count = 5;
+let timer_count = 500;
 let questions = [];
 
 let analysis_page = 0;
@@ -128,28 +128,6 @@ function toggleActive(already_marked = 0) {
 function store_answer() {
     if (analysis_page)
         return;
-    const userAnswerData = {
-        questionNumber: question_count+1,
-        markedAnswer: marked_answer[question_count]
-    };
-    console.log('userAnswerData:', userAnswerData);
-
-    // Send the user answer data to the server
-    fetch('/storeQuizData', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.parse(JSON.stringify(userAnswerData))
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('User answer data stored:', data);
-        })
-        .catch(error => {
-            console.error('Error storing user answer data:', error);
-        });
-    console.log("unanswerable:", unanswerable);
     if (unanswerable) {
         console.log("here");
         return;
@@ -166,6 +144,43 @@ function store_answer() {
     console.log("Here");
     marked_answer[question_count] = user_answer;
     console.log("marked_answer after update:", marked_answer);
+    const userAnswerData = {
+        questionNumber: question_count, // Replace with the actual question number
+        markedAnswer: marked_answer[question_count] // Replace with the actual marked answer
+    };
+    console.log('userAnswerData:', userAnswerData);
+
+    // Send the user answer data to the server
+    fetch('/storeQuizData', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        // body: JSON.stringify({
+        //     questionNumber: question_count,
+        //     markedAnswer: marked_answer[question_count]
+        // })
+        body: JSON.stringify({
+            userAnswerData
+        })
+    })
+
+
+        .then(response => {
+            // Check if the response status indicates success (2xx range)
+            if (response=>response.json()) {
+                console.log('User answer data successfully stored.');
+            } else {
+                console.error('Error storing user answer data. Status:', response.status);
+            }
+        })
+
+        .catch(error => {
+            console.log("Here is an error");
+            console.error('Error storing user answer data:', error);
+        });
+    console.log("unanswerable:", unanswerable);
+
 
 }
 
@@ -173,20 +188,37 @@ function timer_expired() {
     finish_test();
 }
 function finish_test() {
-
     calculate_score();
     analysis_page = 1;
-    location.href = "final.html";
+    
+    // Update the session to indicate that the user has completed the quiz
+    fetch('/updateQuizCompletionFlag', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Redirect the user to the final page
+        window.location.replace("final.html");
+        console.log("Page reoladed");
+    })
+    .catch(error => {
+        console.error('Error updating quiz completion flag:', error);
+    });
 }
+
 function check_already_answered() {
     if (already_answered[question_count] == 1)
         return 1;
     return 0;
 }
 function next() {
-    if(analysis_page==1)
+    if (analysis_page == 1)
         return;
     if (question_count == questions.length - 1) {
+        store_answer();
         calculate_score();
         analysis_page = true;
         location.href = "final.html";
@@ -205,7 +237,7 @@ function next() {
 
 }
 function previous() {
-    if(analysis_page==1)
+    if (analysis_page == 1)
         return;
     if (question_count == 0)
         return;
@@ -224,13 +256,37 @@ function previous() {
 function calculate_score() {
     if (analysis_page)
         return;
-    points = 0;
-    for (let i = 0; i < questions.length; i++)
-        if (marked_answer[i] == questions[i].answer)
-            points += 10;
-    sessionStorage.setItem("points", points);
 
+    fetch('/getUserAnswers', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const userAnswers = data.userAnswers;
+        let points = 0;
+
+        for (let i = 0; i < userAnswers.length; i++) {
+            const userAnswer = userAnswers[i];
+            const questionNumber = userAnswer.question_number;
+            const markedAnswer = userAnswer.marked_answer;
+
+            const correctAnswer = questions[questionNumber].answer; // Assuming questions array contains your question data
+
+            if (markedAnswer === correctAnswer) {
+                points += 10;
+            }
+        }
+
+        sessionStorage.setItem("points", points);
+    })
+    .catch(error => {
+        console.error('Error fetching user answers:', error);
+    });
 }
+
 
 function clear_options() {
     marked_answer[question_count] = "";

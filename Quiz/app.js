@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require('path');
 const { connection } = require("./database.js");
-
+const middleware = require('./middleware/authorization.js');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,6 +10,7 @@ const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const router = require('./routes/index');
+
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -23,16 +24,39 @@ app.get('/', (req, res) => {
 app.get('/register.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'html', 'register.html'));
 });
-app.get('/quiz.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'html', 'quiz.html'));
+app.get('/quiz.html', middleware.requireAuth, (req, res) => {
+    const sess = req.session;
+    if (sess.userDetails && sess.userDetails.username) {
+        const username = sess.userDetails.username;
+        
+        // Check if the user's quiz data exists in the database
+        const query = 'SELECT * FROM user_quiz_data WHERE username = ?';
+        connection.query(query, [username], (error, results) => {
+            if (error) {
+                console.error('Error checking user quiz data:', error);
+                res.status(500).json({ error: 'An error occurred while checking user quiz data' });
+            } else {
+                // If quiz data exists, redirect to the final page
+                if (results.length > 0) {
+                    res.redirect('/final.html');
+                } else {
+                    // If quiz data doesn't exist, render the quiz page
+                    res.sendFile(path.join(__dirname, 'public', 'html', 'quiz.html'));
+                }
+            }
+        });
+    } else {
+        res.status(401).json({ error: 'User session not found' });
+    }
 });
-app.get('/analysis.html', (req, res) => {
+
+app.get('/analysis.html', middleware.requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'html', 'analysis.html'));
 });
 app.get('/login.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'html', 'login.html'));
 });
-app.get('/home.html', (req, res) => {
+app.get('/home.html', middleware.requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'html', 'home.html'));
 });
 
@@ -56,7 +80,7 @@ app.get('/getUserName', (req, res) => {
     if (sess.userDetails) {
         const username = sess.userDetails.username;
         const query = `SELECT firstname, lastname FROM users WHERE username = ?`;
-        
+
         connection.query(query, [username], (error, results) => {
             if (error) {
                 console.error('Error fetching user data:', error);
@@ -81,39 +105,27 @@ app.get('/final.html', (req, res) => {
     // Create the user's quiz data table (if not already created)
     const sess = req.session;
     if (sess.userDetails && sess.userDetails.username) {
-        const username = sess.userDetails.username;
-        const query = `
-            CREATE TABLE IF NOT EXISTS user_quiz_data (
-                username VARCHAR(255) PRIMARY KEY,
-                question_number INT NOT NULL,
-                marked_answer VARCHAR(255)
-            )`;
-        
-        connection.query(query, [username], (error, results) => {
-            if (error) {
-                console.error('Error creating user_quiz_data table:', error);
-                res.status(500).send('An error occurred while creating user_quiz_data table');
-            } else {
-                // Display the final score page
-                res.sendFile(path.join(__dirname, 'public', 'html', 'final.html'));
-            }
-        });
+        res.sendFile(path.join(__dirname, 'public', 'html', 'final.html'));
     } else {
         res.status(401).json({ error: 'User session not found' });
     }
 });
-app.post('/storeQuizData', (req, res) => {
+app.post('/storeQuizData', express.json(), (req, res) => {
+    console.log('Received data: here is ', req.body);
     const sess = req.session;
     if (sess.userDetails && sess.userDetails.username) {
         const username = sess.userDetails.username;
-        const { questionNumber, markedAnswer } = req.body;
-        console.log('Received data:', req.body);
+        const questionNumber = req.body.userAnswerData.questionNumber;
+        const markedAnswer = req.body.userAnswerData.markedAnswer;
+        console.log('The request body is', req.body);
+        console.log('Received data:', questionNumber, markedAnswer);
 
         const query = `
             INSERT INTO user_quiz_data (username, question_number, marked_answer)
             VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE marked_answer = ?`;
-        
+            ON DUPLICATE KEY UPDATE marked_answer = ?;
+        `
+
         connection.query(query, [username, questionNumber, markedAnswer, markedAnswer], (error, results) => {
             if (error) {
                 console.error('Error storing user quiz data:', error);
@@ -127,6 +139,28 @@ app.post('/storeQuizData', (req, res) => {
         res.status(401).json({ error: 'User session not found' });
     }
 });
+app.get('/getUserAnswers', (req, res) => {
+    const sess = req.session;
+    if (sess.userDetails && sess.userDetails.username) {
+        const username = sess.userDetails.username;
+        const query = 'SELECT * FROM user_quiz_data WHERE username = ?';
+
+        connection.query(query, [username], (error, results) => {
+            if (error) {
+                console.error('Error fetching user answers:', error);
+                res.status(500).json({ error: 'An error occurred while fetching user answers' });
+            } else {
+                const userAnswers = JSON.parse(JSON.stringify(results));
+                res.status(200).json({ userAnswers });
+            }
+        });
+    } else {
+        res.status(401).json({ error: 'User session not found' });
+    }
+});
+
+
+
 
 // 404 catch-all handler (middleware)
 app.use(function (req, res, next) {

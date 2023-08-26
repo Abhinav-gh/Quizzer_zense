@@ -84,6 +84,26 @@ function registerUser(regDetails, done) {
       }
     });
   };
+  function createQuizDataTable(connection) {
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS user_quiz_data (
+            username VARCHAR(255),
+            question_number INT,
+            marked_answer VARCHAR(255),
+            PRIMARY KEY (username, question_number)
+        );`;
+
+    connection.query(createTableQuery, (error, results) => {
+        if (error) {
+            console.error('Error creating user_quiz_data table:', error);
+        } else {
+            console.log('user_quiz_data table created successfully');
+        }
+    });
+}
+let connect = configure();
+createQuizDataTable(connect);
+
   module.exports = {
     connection: connection,
     register: registerUser,
