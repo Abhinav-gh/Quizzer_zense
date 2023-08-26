@@ -101,7 +101,7 @@ app.get('/getUserName', (req, res) => {
 
 
 
-app.get('/final.html', (req, res) => {
+app.get('/final.html', middleware.requireAuth,(req, res) => {
     // Create the user's quiz data table (if not already created)
     const sess = req.session;
     if (sess.userDetails && sess.userDetails.username) {
