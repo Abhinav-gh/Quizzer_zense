@@ -66,7 +66,6 @@ Quizzer is an Express application. It allows users to take quizzes, answer quest
     ```
     npm install
     ```
-- Install my
 - Finally:
     ```
     npm start
