@@ -3,6 +3,16 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="..\stylesheets\quiz-final.css">
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true
+            }
+        });
+    </script>
     <title>Quiz-Page</title>
 </head>
 <body>
@@ -11,10 +21,14 @@
         <div class="quiz">
             <div class="quiz_header">
                 <div class="quiz_user">
-                    <h4> Welcome ! <span class="name"> </span></h4>
+                    <div class="user-info">
+                        <h4><span class="name">Username</span></h4>
+                        <div id="attempt-status" class="attempt-status"></div>
+                    </div>
                 </div>
                 
             </div>
+            
             
             <div class="quiz_body">
                 <div class="inner_wrapper">
@@ -29,6 +43,8 @@
                 </div>
                 <button class="btn-next" onclick="previous()"> Previous Question</button>
                 <button class="btn-next" onclick="next()"> Next Question</button>
+                <button class="btn-home" onclick="goToHomePage()"> Go to Home Page</button>
+
                 
             </div>
 

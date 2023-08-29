@@ -4,6 +4,7 @@
  box-sizing: border-box;   
 }
 
+
 body{
     align-items: center;
     background-image: url(../img/pic.jpg);
@@ -55,19 +56,45 @@ body{
     padding-left:30px;
     padding-right:30px;
 }
-.countdown-container{
-    font-size: 15px;
+.countdown-container {
+    font-size: 7px;
     font-weight: bold;
     color: #131212;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 50px;
-    width:150px;
-    background-color: white;
+    width: 200px;
+    background-color: #ff6b6b;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    border-top-right-radius: 40px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: background-color 0.3s, transform 0.3s;
+
 }
+
 .countdown-clock {
-    font-size: 36px;
+    font-size: 24px;
     color: #333333;
+    margin: 0;
 }
+
+.countdown-label {
+    font-size: 12px;
+    color: #777777;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+.countdown-container:hover {
+    background-color: #eaeaea;
+    transform: scale(1.05);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
 
 .countdown-expired {
     font-size: 36px;
@@ -107,6 +134,20 @@ body{
 .option.active{
     background-color: #341f97;
     color: #fff;
+    text-shadow: 0 4px 8px  rgba(3, 12, 8, 0.5);
+    box-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
+    transition: 0.6s all;
+}
+.option.correct{
+    background-color: #2ecc71;
+    color: #fff;
+    text-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
+    box-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
+    transition: 0.6s all;
+}
+.option.marked_correct{
+    background-color: #2ecc71;
+    color: #fff;
     text-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
     box-shadow: 0 4px 8px rgba(3, 12, 8, 0.5);
     transition: 0.6s all;
@@ -130,6 +171,35 @@ li.option.disabled {
     background-color: greenyellow;
     color: #000;
 }
+.btn-home {
+    border: none;
+    padding: 15px 35px;
+    background-color: #e74c3c;
+    color: #fff;
+    border-radius: 50px;
+    transition: 0.5s all;
+}
+
+.btn-home:hover {
+    cursor: pointer;
+    background-color: #ff6347;
+    color: #000;
+}
+.btn-finish {
+    background-color: #e74c3c;
+    color: #fff;
+    border-radius: 50px;
+    padding: 15px 35px;
+    transition: 0.5s all;
+}
+
+.btn-finish:hover {
+    background-color: #ff6347;
+    cursor: pointer;
+    color: #000;
+}
+
+
 .blue{
     
     background-color: #341f97;
@@ -189,9 +259,9 @@ li.option.disabled {
     background-color: #f2f2f2;
     border-radius: 5px;
 }
+
 .question {
-    font-size: auto; /* Set an initial font size */
-    font-family: Georgia;
+    font-size: auto;    
     font-weight: bold;
     flex-direction: row;
     color: #fff;
@@ -203,25 +273,57 @@ li.option.disabled {
     margin: auto;
     height: auto;
     width: 700px;
-    max-height: 300px; /*Set a maximum height for the question box */
+    height: auto;
+    /* max-height: 300px; Set a maximum height for the question box */
     border-radius: 10px;
-    overflow-y: auto;
     overflow: scroll; 
-
+    padding: 20px;
+    padding-top: 20px;
     /*Scroll bar things*/
     scrollbar-width: thin;
     scrollbar-color: #34495e #f2f2f2;
     scroll-behavior: smooth;
     word-wrap: break-word;
     white-space: normal;
-    padding: 10px;
+}
+.quiz_points {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: #fff;
+    margin-top: 10px;
+}
+
+.quiz_points span {
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+/* Add these CSS rules to your existing stylesheet */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.attempt-status {
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.attempted {
+    background-color: #2ecc71; /* Green color for attempted & correct */
+}
+
+.not-attempted {
+    background-color: #e74c3c; /* Red color for not attempted */
 }
 
 
-::-webkit-scrollbar {
-    width: 0;
-    background-color: transparent;
-}
 .show-animation {
     animation-name: scale-in;
     animation-duration: 0.6s;

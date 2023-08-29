@@ -159,7 +159,32 @@ app.get('/getUserAnswers', (req, res) => {
     }
 });
 
-
+app.get('/getUserQuizData', (req, res) => {
+    const sess = req.session;
+    if (sess.userDetails && sess.userDetails.username) {
+        const username = sess.userDetails.username;
+        
+        const query = `
+            SELECT question_number, marked_answer
+            FROM user_quiz_data
+            WHERE username = ?`;
+        
+        connection.query(query, [username], (error, results) => {
+            if (error) {
+                console.error('Error fetching user quiz data:', error);
+                res.status(500).json({ error: 'An error occurred while fetching user quiz data' });
+            } else {
+                const userQuizData = results.map(row => ({
+                    questionNumber: row.question_number,
+                    markedAnswer: row.marked_answer
+                }));
+                res.status(200).json(userQuizData);
+            }
+        });
+    } else {
+        res.status(401).json({ error: 'User session not found' });
+    }
+});
 
 
 // 404 catch-all handler (middleware)

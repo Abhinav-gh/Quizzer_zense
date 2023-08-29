@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (analysis_page) {
                 console.log("Now in Analysis page");
                 show_analysis();
-                toggle_Active_analysis();
+                
             }
             else {
                 console.log(questions);
@@ -53,6 +53,27 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch((error) => {
             console.error('Error fetching questions:', error);
+        });
+        fetch('/getUserName')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(userData => {
+            console.log('User data:', userData);
+            const firstName = userData.firstname;
+            const lastName = userData.lastname;
+
+        const welcomeMessage = document.querySelector('.quiz_user h4 span.name');
+        welcomeMessage.textContent = `${firstName} ${lastName}`;
+
+        // Add a class to the welcome message to style it
+        welcomeMessage.classList.add('user-name');
+        })
+        .catch(error => {
+            console.error('Error fetching username:', error);
         });
 });
 
@@ -76,16 +97,16 @@ function show(count, already_marked = 0) {
         let question = document.getElementById("questions");
         let [first, second, third, fourth] = questions[count].options;
         question.innerHTML = `<div class="question"><h2>Q${count + 1
-            }.${questions[count].question}</h2></div>
-
+           }.${questions[count].question}</h2></div>
         <ul class="option_group">
         <li class="option">${first} </li>
         <li class="option">${second} </li>
         <li class="option">${third} </li>
         <li class="option">${fourth} </li>
         </ul>`;
-        question_count = count;
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, question]);
 
+        question_count = count;
         toggleActive(already_marked);
     }
 }
@@ -218,10 +239,7 @@ function next() {
     if (analysis_page == 1)
         return;
     if (question_count == questions.length - 1) {
-        store_answer();
-        calculate_score();
-        analysis_page = true;
-        location.href = "final.html";
+        return;
     }
     if (unanswerable) {
         make_unanswerable();
@@ -253,6 +271,25 @@ function previous() {
     }
 
 }
+function finishQuiz() {
+    if (question_count === questions.length - 1) {
+        // Show a confirmation dialog before finishing the quiz
+        const confirmFinish = confirm("Are you sure you want to finish the quiz?");
+        if (confirmFinish) {
+            store_answer();
+            calculate_score();
+            alert("Quiz Finished Successfully!");
+            
+            analysis_page = true;
+            // Redirect to the final page
+            window.location.href = "final.html";
+        }
+    } else {
+        // If the quiz is not finished, navigate to the next question
+        alert("Please go through all the questions and finish the quiz at last question");
+    }
+}
+
 function calculate_score() {
     if (analysis_page)
         return;
