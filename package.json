@@ -5,16 +5,18 @@
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
     "express3-handlebars": "^0.5.2",
+    "mongoose": "^8.0.3",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
-    "mysql2": "^3.6.0"
+    "mysql2": "^3.6.0",
+    "nodemon": "^3.0.2"
   },
   "devDependencies": {
     "chai": "^4.3.7",
     "mocha": "^10.2.0"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

@@ -120,7 +120,8 @@ app.post('/storeQuizData', express.json(), (req, res) => {
         console.log('The request body is', req.body);
         console.log('Received data:', questionNumber, markedAnswer);
 
-        const query = `
+        const query = 
+        `
             INSERT INTO user_quiz_data (username, question_number, marked_answer)
             VALUES (?, ?, ?)
             ON DUPLICATE KEY UPDATE marked_answer = ?;

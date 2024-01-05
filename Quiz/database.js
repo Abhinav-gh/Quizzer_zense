@@ -1,5 +1,5 @@
 const mysql = require("mysql2");
-
+const Question = require('./models/questions');
 var connection = mysql.createConnection({
     host: "localhost",
     user: "root",
@@ -100,7 +100,26 @@ function registerUser(regDetails, done) {
             console.log('user_quiz_data table created successfully');
         }
     });
+
+    // Adding Test questionss for mongodb
+    const question = new Question({
+        question_number: 1,
+        question: 'What is the capital of France?',
+        answer: 'Paris',
+        options: ['Berlin', 'Paris', 'Rome', 'Madrid']
+    });
+    question.save()
+        .then((result) => console.log(result))
+        .catch((err) => console.log(err));
 }
+
+
+// New code starts to use mongoDB
+const mongoose = require('mongoose');
+const dburi = "mongodb+srv://abhinav:Xd6bkChwbdqPpjBg@cluster0.ybh9fg4.mongodb.net/Tutorial?retryWrites=true&w=majority";
+mongoose.connect(dburi, {useNewUrlParser: true, useUnifiedTopology: true})
+  .then((result) => console.log("connected to Mongodb"))
+  .catch((err) => console.log(err));
 let connect = configure();
 createQuizDataTable(connect);
 
