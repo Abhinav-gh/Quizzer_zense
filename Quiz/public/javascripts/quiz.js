@@ -26,26 +26,37 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(questionsFromServer);
 
             // Assign the fetched questions to the 'questions' variable
-            questions = questionsFromServer.map((dbQuestion, index) => {
-                return {
-                    id: index + 1,
+            // questions = questionsFromServer.map((dbQuestion, index) => {
+            //     return {
+            //         id: index + 1,
+            //         question: dbQuestion.question,
+            //         answer: dbQuestion.solutions,
+            //         options: [
+            //             dbQuestion.option1,
+            //             dbQuestion.option2,
+            //             dbQuestion.option3,
+            //             dbQuestion.option4,
+            //         ],
+            //     };
+            // });
+
+            // Now using mongodb
+            if (questionsFromServer.length > 0) {
+                const dbQuestion = questionsFromServer[0];
+                questions = {
+                    id: 1,
                     question: dbQuestion.question,
-                    answer: dbQuestion.solutions,
-                    options: [
-                        dbQuestion.option1,
-                        dbQuestion.option2,
-                        dbQuestion.option3,
-                        dbQuestion.option4,
-                    ],
+                    answer: dbQuestion.answer,
+                    options: dbQuestion.options,
                 };
-            });
+            }
             if (analysis_page) {
                 console.log("Now in Analysis page");
                 show_analysis();
                 
             }
             else {
-                console.log(questions);
+                console.log("This is where we are getting the questions ", questions);
                 show(question_count, check_already_answered());
                 timer(timer_count);
             }
@@ -91,25 +102,46 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// function show(count, already_marked = 0) {
+//     console.log("Marked answer    ", marked_answer);
+//     if (count >= 0 && count < questions.length) {
+//         let question = document.getElementById("questions");
+//         let [first, second, third, fourth] = questions[count].options;
+//         question.innerHTML = `<div class="question"><h2>Q${count + 1
+//            }.${questions[count].question}</h2></div>
+//         <ul class="option_group">
+//         <li class="option">${first} </li>
+//         <li class="option">${second} </li>
+//         <li class="option">${third} </li>
+//         <li class="option">${fourth} </li>
+//         </ul>`;
+//         MathJax.Hub.Queue(["Typeset", MathJax.Hub, question]);
+
+//         question_count = count;
+//         toggleActive(already_marked);
+//     }
+// }
 function show(count, already_marked = 0) {
     console.log("Marked answer    ", marked_answer);
     if (count >= 0 && count < questions.length) {
         let question = document.getElementById("questions");
-        let [first, second, third, fourth] = questions[count].options;
-        question.innerHTML = `<div class="question"><h2>Q${count + 1
-           }.${questions[count].question}</h2></div>
-        <ul class="option_group">
-        <li class="option">${first} </li>
-        <li class="option">${second} </li>
-        <li class="option">${third} </li>
-        <li class="option">${fourth} </li>
-        </ul>`;
+        let optionsHTML = questions[count].options.map(option => `<li class="option">${option}</li>`).join('');
+        question.innerHTML = `
+            <div class="question">
+                <h2>Q${count + 1}.${questions[count].question}</h2>
+            </div>
+            <ul class="option_group">
+                ${optionsHTML}
+            </ul>
+        `;
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, question]);
 
         question_count = count;
         toggleActive(already_marked);
     }
 }
+
+
 
 function toggleActive(already_marked = 0) {
     if (analysis_page)

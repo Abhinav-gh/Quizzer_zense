@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require('path');
 const { connection } = require("./database.js");
+const Question = require('./models/questions');
 const middleware = require('./middleware/authorization.js');
 
 const app = express();
@@ -64,16 +65,26 @@ app.get('/home.html', middleware.requireAuth, (req, res) => {
 app.get('/getQuestions', (req, res) => {
     const query = 'SELECT * FROM questions';
 
-    connection.query(query, (error, results) => {
-        if (error) {
-            console.error('Error fetching questions:', error);
-            res.status(500).json({ error: 'An error occurred while fetching questions from the server' });
-        } else {
-            const data = JSON.parse(JSON.stringify(results));
-            console.log(data);
+    // connection.query(query, (error, results) => {
+    //     if (error) {
+    //         console.error('Error fetching questions:', error);
+    //         res.status(500).json({ error: 'An error occurred while fetching questions from the server' });
+    //     } else {
+    //         const data = JSON.parse(JSON.stringify(results));
+    //         console.log(data);
+    //         res.status(200).json(data);
+    //     }
+    // });
+
+    Question.find()
+        .then(questions => {
+            const data = JSON.parse(JSON.stringify(questions));
             res.status(200).json(data);
-        }
-    });
+        })
+        .catch(err => {
+            console.log("An error occurred while fetching questions from the db:", err);
+            res.status(500).json({ error: 'An error occurred while fetching questions from the server' });
+        });
 });
 app.get('/getUserName', (req, res) => {
     const sess = req.session;
