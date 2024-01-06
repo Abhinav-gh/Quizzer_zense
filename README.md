@@ -37,6 +37,14 @@ Quizzer is an Express application. It allows users to take quizzes, answer quest
 - Start MySQL Server: After installation, start the MySQL server using the provided command or by starting the MySQL service.
 - Navigate to project directory.
 
+
+### Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`MONGODB_URI`
+
+
 ### Installation
 - Download this repository or clone in your local system.
 
