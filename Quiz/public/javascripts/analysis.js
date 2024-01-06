@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.json();
         })
         .then((questionsFromServer) => {
-            console.log(questionsFromServer);
+            console.log('Questions from server:',questionsFromServer);
             
             // Assign the fetched questions to the 'questions' variable
             questions = questionsFromServer.map((dbQuestion, index) => {
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Array.isArray(userQuizData)) {
                     userQuizData.forEach(data => {
                         console.log(data.questionNumber, data.markedAnswer, "These are here");
-                        markedAnswers[data.questionNumber ]=(data.markedAnswer );
+                        markedAnswers[data.questionNumber]=(data.markedAnswer );
                         console.log(data);
                     });
                     

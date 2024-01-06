@@ -2,6 +2,8 @@ const express = require("express");
 const path = require('path');
 const { connection } = require("./database.js");
 const Question = require('./models/questions');
+const User = require('./models/users');
+const UserQuizData = require('./models/UserQuizData');
 const middleware = require('./middleware/authorization.js');
 
 // Import the script to import questions
@@ -33,7 +35,7 @@ app.get('/quiz.html', middleware.requireAuth, (req, res) => {
     const sess = req.session;
     if (sess.userDetails && sess.userDetails.username) {
         const username = sess.userDetails.username;
-        
+
         // Check if the user's quiz data exists in the database
         const query = 'SELECT * FROM user_quiz_data WHERE username = ?';
         connection.query(query, [username], (error, results) => {
@@ -79,8 +81,8 @@ app.get('/getQuestions', (req, res) => {
     //         res.status(200).json(data);
     //     }
     // });
-    try{
-        Question.find()     
+    try {
+        Question.find()
             .then(questions => {
                 const data = JSON.parse(JSON.stringify(questions));
                 res.status(200).json(data);
@@ -89,37 +91,61 @@ app.get('/getQuestions', (req, res) => {
                 console.log("An error occurred while fetching questions from the db:", err);
                 res.status(500).json({ error: 'An error occurred while fetching questions from the server' });
             });
-    }catch(err){
+    } catch (err) {
         console.log("We could not complete /getQuestions");
     }
 });
-app.get('/getUserName', (req, res) => {
+app.get('/getUserName', async(req, res) => {
     const sess = req.session;
-    if (sess.userDetails) {
-        const username = sess.userDetails.username;
-        const query = `SELECT firstname, lastname FROM users WHERE username = ?`;
+    // if (sess.userDetails) {
+    // const username = sess.userDetails.username;
+    // const query = `SELECT firstname, lastname FROM users WHERE username = ?`;
 
-        connection.query(query, [username], (error, results) => {
-            if (error) {
-                console.error('Error fetching user data:', error);
-                res.status(500).json({ error: 'An error occurred while fetching user data from the server' });
+    // connection.query(query, [username], (error, results) => {
+    //     if (error) {
+    //         console.error('Error fetching user data:', error);
+    //         res.status(500).json({ error: 'An error occurred while fetching user data from the server' });
+    //     } else {
+    //         if (results.length > 0) {
+    //             const userData = results[0];
+    //             res.status(200).json(userData);
+    //         } else {
+    //             res.status(404).json({ error: 'User data not found' });
+    //         }
+    //     }
+    // });
+
+    // New mongodb code
+    try {
+        if (sess.userDetails) {
+            const username = sess.userDetails.username;
+
+            // Using MongoDB to find the user by username
+            const user = await User.findOne({ username: username }, 'firstname lastname').exec();
+
+            if (user) {
+                // Extracting the required fields
+                const userData = {
+                    firstname: user.firstname,
+                    lastname: user.lastname
+                };
+
+                res.status(200).json(userData);
             } else {
-                if (results.length > 0) {
-                    const userData = results[0];
-                    res.status(200).json(userData);
-                } else {
-                    res.status(404).json({ error: 'User data not found' });
-                }
+                res.status(404).json({ error: 'User data not found' });
             }
-        });
-    } else {
-        res.status(401).json({ error: 'User session not found' });
+        } else {
+            res.status(401).json({ error: 'User session not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).json({ error: 'An error occurred while fetching user data from the server' });
     }
 });
 
 
 
-app.get('/final.html', middleware.requireAuth,(req, res) => {
+app.get('/final.html', middleware.requireAuth, (req, res) => {
     // Create the user's quiz data table (if not already created)
     const sess = req.session;
     if (sess.userDetails && sess.userDetails.username) {
@@ -128,38 +154,75 @@ app.get('/final.html', middleware.requireAuth,(req, res) => {
         res.status(401).json({ error: 'User session not found' });
     }
 });
-app.post('/storeQuizData', express.json(), (req, res) => {
-    console.log('Received data: here is ', req.body);
-    const sess = req.session;
-    if (sess.userDetails && sess.userDetails.username) {
-        const username = sess.userDetails.username;
-        const questionNumber = req.body.userAnswerData.questionNumber;
-        const markedAnswer = req.body.userAnswerData.markedAnswer;
-        console.log('The request body is', req.body);
-        console.log('Received data:', questionNumber, markedAnswer);
+app.post('/storeQuizData', express.json(), async (req, res) => {
+    // console.log('Received data: here is ', req.body);
+    // const sess = req.session;
+    // if (sess.userDetails && sess.userDetails.username) {
+    //     const username = sess.userDetails.username;
+    //     const questionNumber = req.body.userAnswerData.questionNumber;
+    //     const markedAnswer = req.body.userAnswerData.markedAnswer;
+    //     console.log('The request body is', req.body);
+    //     console.log('Received data:', questionNumber, markedAnswer);
 
-        const query = 
-        `
-            INSERT INTO user_quiz_data (username, question_number, marked_answer)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE marked_answer = ?;
-        `
+    //     const query =
+    //         `
+    //         INSERT INTO user_quiz_data (username, question_number, marked_answer)
+    //         VALUES (?, ?, ?)
+    //         ON DUPLICATE KEY UPDATE marked_answer = ?;
+    //     `
 
-        connection.query(query, [username, questionNumber, markedAnswer, markedAnswer], (error, results) => {
-            if (error) {
-                console.error('Error storing user quiz data:', error);
-                res.status(500).json({ error: 'An error occurred while storing user quiz data' });
-            } else {
-                console.log('User quiz data stored successfully');
-                res.status(200).json({ message: 'User quiz data stored successfully' });
-            }
-        });
-    } else {
-        res.status(401).json({ error: 'User session not found' });
+    //     connection.query(query, [username, questionNumber, markedAnswer, markedAnswer], (error, results) => {
+    //         if (error) {
+    //             console.error('Error storing user quiz data:', error);
+    //             res.status(500).json({ error: 'An error occurred while storing user quiz data' });
+    //         } else {
+    //             console.log('User quiz data stored successfully');
+    //             res.status(200).json({ message: 'User quiz data stored successfully' });
+    //         }
+    //     });
+    // } else {
+    //     res.status(401).json({ error: 'User session not found' });
+    // }
+
+    // New mongodb code
+    try {
+        const sess = req.session;
+        if (sess.userDetails && sess.userDetails.username) {
+            const username = sess.userDetails.username;
+            const questionNumber = req.body.userAnswerData.questionNumber;
+            const markedAnswer = req.body.userAnswerData.markedAnswer;
+
+            // Using MongoDB to store user quiz data
+            const filter = { username: username, question_number: questionNumber };
+            const update = { markedAnswer: markedAnswer };
+            const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+            // Insert or update user quiz data
+            await UserQuizData.findOneAndUpdate(filter, update, options).exec();
+
+            console.log('User quiz data stored successfully');
+
+            // Optionally, fetch user answers if needed
+            const userAnswers = await UserQuizData.find({ username: username }).exec();
+            const transformedUserAnswers = userAnswers.map(data => ({
+                questionNumber: data.question_number,
+                markedAnswer: data.marked_answer
+            }));
+
+            console.log('Transformed user answers:', transformedUserAnswers);
+
+            res.status(200).json({ message: 'User quiz data stored successfully' });
+        } else {
+            res.status(401).json({ error: 'User session not found' });
+        }
+    } catch (error) {
+        console.error('Error storing user quiz data:', error);
+        res.status(500).json({ error: 'An error occurred while storing user quiz data' });
     }
+    
 });
-app.get('/getUserAnswers', (req, res) => {
-    const sess = req.session;
+app.get('/getUserAnswers', async(req, res) => {
+    /* const sess = req.session;
     if (sess.userDetails && sess.userDetails.username) {
         const username = sess.userDetails.username;
         const query = 'SELECT * FROM user_quiz_data WHERE username = ?';
@@ -176,18 +239,37 @@ app.get('/getUserAnswers', (req, res) => {
     } else {
         res.status(401).json({ error: 'User session not found' });
     }
+    */
+
+    // New mongodb code
+    try {
+        const sess = req.session;
+        if (sess.userDetails && sess.userDetails.username) {
+            const username = sess.userDetails.username;
+
+            // Using MongoDB to fetch user answers
+            const userAnswers = await UserQuizData.find({ username: username }).exec();
+
+            res.status(200).json({ userAnswers });
+        } else {
+            res.status(401).json({ error: 'User session not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user answers:', error);
+        res.status(500).json({ error: 'An error occurred while fetching user answers' });
+    }
 });
 
-app.get('/getUserQuizData', (req, res) => {
-    const sess = req.session;
+app.get('/getUserQuizData', async(req, res) => {
+    /* const sess = req.session;
     if (sess.userDetails && sess.userDetails.username) {
         const username = sess.userDetails.username;
-        
+
         const query = `
             SELECT question_number, marked_answer
             FROM user_quiz_data
             WHERE username = ?`;
-        
+
         connection.query(query, [username], (error, results) => {
             if (error) {
                 console.error('Error fetching user quiz data:', error);
@@ -202,6 +284,30 @@ app.get('/getUserQuizData', (req, res) => {
         });
     } else {
         res.status(401).json({ error: 'User session not found' });
+    }
+    */
+
+    // New mongodb code
+    try {
+        const sess = req.session;
+        if (sess.userDetails && sess.userDetails.username) {
+            const username = sess.userDetails.username;
+
+            // Using MongoDB to fetch user answers
+            const userAnswers = await UserQuizData.find({ username: username }).exec();
+            console.log('User answers ',userAnswers);
+            const transformedUserAnswers = userAnswers.map(data => ({
+                questionNumber: data.question_number,
+                markedAnswer: data.marked_answer
+            }));
+
+            res.status(200).json(transformedUserAnswers);
+        } else {
+            res.status(401).json({ error: 'User session not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user answers:', error);
+        res.status(500).json({ error: 'An error occurred while fetching user answers' });
     }
 });
 
