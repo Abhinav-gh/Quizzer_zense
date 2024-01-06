@@ -1,6 +1,7 @@
 const mysql = require("mysql2");
-const Question = require('./models/questions');
+const mongoose = require('mongoose');
 require('dotenv').config();
+const dburi = process.env.MONGODB_URI;
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -117,11 +118,28 @@ function registerUser(regDetails, done) {
 
 
 // New code starts to use mongoDB
-const mongoose = require('mongoose');
-const dburi = process.env.MONGODB_URI;
-mongoose.connect(dburi, {useNewUrlParser: true, useUnifiedTopology: true})
-  .then((result) => console.log("connected to Mongodb"))
-  .catch((err) => console.log(err));
+function connectToMongoDB() {
+  mongoose.connect(dburi, { useNewUrlParser: true, useUnifiedTopology: true});
+  mongoose.connection.on('connected', () => {
+      console.log('Connected to MongoDB');
+  });
+
+  mongoose.connection.on('error', (err) => {
+      console.error('MongoDB connection error:', err);
+      // Retry connection after a delay
+      setTimeout(connectToMongoDB, 1000); // Retry after 1 seconds
+  });
+
+  mongoose.connection.on('disconnected', () => {
+      console.log('MongoDB disconnected. Retrying to connect...');
+      // Retry connection after a delay
+      setTimeout(connectToMongoDB, 1000); // Retry after 1 seconds
+  });
+}
+
+
+connectToMongoDB();
+
 let connect = configure();
 createQuizDataTable(connect);
 

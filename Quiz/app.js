@@ -4,6 +4,10 @@ const { connection } = require("./database.js");
 const Question = require('./models/questions');
 const middleware = require('./middleware/authorization.js');
 
+// Import the script to import questions
+require('./scripts/importQuestions');
+
+
 const app = express();
 const port = process.env.PORT || 3000;
 // let routes = require("./routes/index");
@@ -75,16 +79,19 @@ app.get('/getQuestions', (req, res) => {
     //         res.status(200).json(data);
     //     }
     // });
-
-    Question.find()
-        .then(questions => {
-            const data = JSON.parse(JSON.stringify(questions));
-            res.status(200).json(data);
-        })
-        .catch(err => {
-            console.log("An error occurred while fetching questions from the db:", err);
-            res.status(500).json({ error: 'An error occurred while fetching questions from the server' });
-        });
+    try{
+        Question.find()     
+            .then(questions => {
+                const data = JSON.parse(JSON.stringify(questions));
+                res.status(200).json(data);
+            })
+            .catch(err => {
+                console.log("An error occurred while fetching questions from the db:", err);
+                res.status(500).json({ error: 'An error occurred while fetching questions from the server' });
+            });
+    }catch(err){
+        console.log("We could not complete /getQuestions");
+    }
 });
 app.get('/getUserName', (req, res) => {
     const sess = req.session;
