@@ -125,8 +125,8 @@ function connectToMongoDB() {
   });
 
   mongoose.connection.on('error', (err) => {
-      console.error('MongoDB connection error:', err);
-      console.log('Retrying to connect to MongoDB....');
+      console.error('MongoDB connection error :', err);
+      console.log('Retrying to connect to MongoDB...');
       // Retry connection after a delay
       setTimeout(connectToMongoDB, 1000); // Retry after 1 seconds
   });
