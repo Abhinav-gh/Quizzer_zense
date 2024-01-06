@@ -208,13 +208,13 @@ app.get('/getUserQuizData', (req, res) => {
 
 // 404 catch-all handler (middleware)
 app.use(function (req, res, next) {
-    res.status(404).send('404 - This page was not found');
+    res.status(404).send('Custom handling 404 - This page was not found');
 });
 
 // 500 error handler (middleware)
 app.use(function (err, req, res, next) {
     console.error(err.stack);
-    res.status(500).send('500 - Server Error');
+    res.status(500).send('Custom handling 500 - Server Error');
 });
 
 // Start the server
