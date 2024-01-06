@@ -129,27 +129,6 @@ function show(count, already_marked = 0) {
         toggleActive(already_marked);
     }
 }
-// function show(count, already_marked = 0) {
-//     console.log("Marked answer    ", marked_answer);
-//     if (count >= 0 && count < questions.length) {
-//         let question = document.getElementById("questions");
-//         let optionsHTML = questions[count].options.map(option => `<li class="option">${option}</li>`).join('');
-//         question.innerHTML = `
-//             <div class="question">
-//                 <h2>Q${count + 1}.${questions[count].question}</h2>
-//             </div>
-//             <ul class="option_group">
-//                 ${optionsHTML}
-//             </ul>
-//         `;
-//         MathJax.Hub.Queue(["Typeset", MathJax.Hub, question]);
-
-//         question_count = count;
-//         toggleActive(already_marked);
-//     }
-// }
-
-
 
 function toggleActive(already_marked = 0) {
     if (analysis_page)

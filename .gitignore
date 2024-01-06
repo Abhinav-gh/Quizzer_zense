@@ -4,4 +4,5 @@ learn_node/node_modules
 node_modules
 *~
 .DS_Store
-
+Quiz/.env
+Quiz/node_modules

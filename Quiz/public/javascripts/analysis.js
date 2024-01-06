@@ -14,18 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Assign the fetched questions to the 'questions' variable
             questions = questionsFromServer.map((dbQuestion, index) => {
-                return {
-                    id: index + 1,
-                    question: dbQuestion.question,
-                    answer: dbQuestion.solutions,
-                    options: [
-                        dbQuestion.option1,
-                        dbQuestion.option2,
-                        dbQuestion.option3,
-                        dbQuestion.option4,
-                    ],
-                };
-            }); 
+                    return {
+                        id: index + 1,
+                        question: dbQuestion.question,
+                        answer: dbQuestion.answer,
+                        options: dbQuestion.options, // Use the existing options array
+                    };
+                }); 
             for (let i = 1; i <= questions.length; i++) {
                 markedAnswers[i] = [];
             }
