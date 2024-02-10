@@ -1,4 +1,5 @@
 const express = require("express");
+
 const path = require('path');
 const { connection } = require("./database.js");
 const middleware = require('./middleware/authorization.js');
