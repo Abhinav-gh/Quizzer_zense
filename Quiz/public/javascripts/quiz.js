@@ -5,8 +5,8 @@ let user_name = sessionStorage.getItem("name");
 
 
 
-let already_answered = [0, 0, 0];
-let marked_answer = ["", "", ""];
+let already_answered = [];
+let marked_answer = [];
 let unanswerable = 0;
 let question_count = 0;
 let points = 0;
@@ -26,40 +26,26 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(questionsFromServer);
 
             // Assign the fetched questions to the 'questions' variable
-            // questions = questionsFromServer.map((dbQuestion, index) => {
-            //     return {
-            //         id: index + 1,
-            //         question: dbQuestion.question,
-            //         answer: dbQuestion.solutions,
-            //         options: [
-            //             dbQuestion.option1,
-            //             dbQuestion.option2,
-            //             dbQuestion.option3,
-            //             dbQuestion.option4,
-            //         ],
-            //     };
-            // });
-
-            // Now using mongodb
-            if (questionsFromServer.length > 0) {
-                questions = questionsFromServer.map((dbQuestion, index) => {
-                    return {
-                        id: index + 1,
-                        question: dbQuestion.question,
-                        answer: dbQuestion.answer,
-                        options: dbQuestion.options, // Use the existing options array
-                    };
-                });
-            }
-            
-            
+            questions = questionsFromServer.map((dbQuestion, index) => {
+                return {
+                    id: index + 1,
+                    question: dbQuestion.question,
+                    answer: dbQuestion.solutions,
+                    options: [
+                        dbQuestion.option1,
+                        dbQuestion.option2,
+                        dbQuestion.option3,
+                        dbQuestion.option4,
+                    ],
+                };
+            });
             if (analysis_page) {
                 console.log("Now in Analysis page");
                 show_analysis();
                 
             }
             else {
-                // console.log("This is where we are getting the questions ", questions);
+                console.log(questions);
                 show(question_count, check_already_answered());
                 timer(timer_count);
             }
@@ -106,15 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function show(count, already_marked = 0) {
-    // console.log("Marked answer    ", marked_answer);
-    console.log("We are inside the show");
-    console.log("Count is ", count);
-    console.log("questions leght is ", questions.length);
+    console.log("Marked answer    ", marked_answer);
     if (count >= 0 && count < questions.length) {
-        console.log("We are inside the if in show");
         let question = document.getElementById("questions");
         let [first, second, third, fourth] = questions[count].options;
-        console.log("The first option is ", first);
         question.innerHTML = `<div class="question"><h2>Q${count + 1
            }.${questions[count].question}</h2></div>
         <ul class="option_group">
@@ -169,7 +150,7 @@ function store_answer() {
     if (analysis_page)
         return;
     if (unanswerable) {
-        // console.log("here");
+        console.log("here");
         return;
     }
     let user_answer = document.querySelector("li.option.active");
@@ -181,7 +162,7 @@ function store_answer() {
 
     if (already_answered[question_count] === 0)
         already_answered[question_count] = 1;
-    // console.log("Here");
+    console.log("Here");
     marked_answer[question_count] = user_answer;
     console.log("marked_answer after update:", marked_answer);
     const userAnswerData = {

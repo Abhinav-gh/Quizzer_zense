@@ -10,17 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.json();
         })
         .then((questionsFromServer) => {
-            console.log('Questions from server:',questionsFromServer);
+            console.log(questionsFromServer);
             
             // Assign the fetched questions to the 'questions' variable
             questions = questionsFromServer.map((dbQuestion, index) => {
-                    return {
-                        id: index + 1,
-                        question: dbQuestion.question,
-                        answer: dbQuestion.answer,
-                        options: dbQuestion.options, // Use the existing options array
-                    };
-                }); 
+                return {
+                    id: index + 1,
+                    question: dbQuestion.question,
+                    answer: dbQuestion.solutions,
+                    options: [
+                        dbQuestion.option1,
+                        dbQuestion.option2,
+                        dbQuestion.option3,
+                        dbQuestion.option4,
+                    ],
+                };
+            }); 
             for (let i = 1; i <= questions.length; i++) {
                 markedAnswers[i] = [];
             }
@@ -30,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Array.isArray(userQuizData)) {
                     userQuizData.forEach(data => {
                         console.log(data.questionNumber, data.markedAnswer, "These are here");
-                        markedAnswers[data.questionNumber]=(data.markedAnswer );
+                        markedAnswers[data.questionNumber ]=(data.markedAnswer );
                         console.log(data);
                     });
                     
